@@ -1,3 +1,7 @@
+Aquí tienes el README con el apartado de Ko-fi agregado al final:
+
+---
+
 # 📋 SD Paste Generation Data
 
 Extension for **Automatic1111 Stable Diffusion WebUI** that replicates the "Paste Generation Data" functionality from tensor.art — allowing you to copy image metadata from CivitAI and automatically apply all parameters.
@@ -101,3 +105,13 @@ sd-paste-generation/
 - ✅ CivitAI standard metadata format
 - ✅ A1111 standard metadata format
 - ⚠️ Models and LoRAs: must be installed locally to be applied
+
+---
+
+## ☕ Support the project
+
+If this extension saves you time and you'd like to support its development, a coffee is always appreciated!
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/danielgs20019)
+
+Every contribution helps keep the project maintained and motivates new features. Thank you! 🙏

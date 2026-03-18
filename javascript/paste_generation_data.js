@@ -391,7 +391,6 @@ Steps: 25, CFG scale: 3.5, Sampler: DPM++ 2M, Seed: 1071487967, Size: 896x1152, 
     document.getElementById("pgd_modal_clear").onclick = () => {
       document.getElementById("pgd_modal_input").value = "";
       document.getElementById("pgd_modal_status").textContent = "";
-      document.getElementById("pgd_modal_status").style.color = "#10b981";
     };
 
     document.getElementById("pgd_modal_apply").onclick = () => {
@@ -402,14 +401,11 @@ Steps: 25, CFG scale: 3.5, Sampler: DPM++ 2M, Seed: 1071487967, Size: 896x1152, 
           "⚠️ No hay datos para procesar.";
         return;
       }
-      applyAndClose(text);
-    };
 
-    function applyAndClose(text) {
       const data = parseGenerationData(text);
       const { applied, failed } = applyToTab(prefix, data);
+
       const statusEl = document.getElementById("pgd_modal_status");
-      if (!statusEl) return;
       if (applied.length === 0) {
         statusEl.style.color = "#ef4444";
         statusEl.textContent = "⚠️ No se encontraron parámetros válidos.";
@@ -420,77 +416,12 @@ Steps: 25, CFG scale: 3.5, Sampler: DPM++ 2M, Seed: 1071487967, Size: 896x1152, 
           (failed.length ? `\n⚠️ No encontrado en UI: ${failed.join(", ")}` : "");
         setTimeout(close, 2000);
       }
-    }
+    };
 
-    // ─── Auto-read clipboard on open ──────────────────────────────────────
-    function setClipboardText(text) {
-      if (!text || !text.trim()) return;
-      const textarea = document.getElementById("pgd_modal_input");
-      const statusEl = document.getElementById("pgd_modal_status");
-      if (!textarea) return;
-
-      // Only fill if it looks like generation data (has Steps: or a prompt-like structure)
-      const looksLikeGenData =
-        /Steps\s*:/i.test(text) ||
-        /Negative\s*prompt\s*:/i.test(text) ||
-        /CFG\s*scale\s*:/i.test(text) ||
-        /Sampler\s*:/i.test(text);
-
-      if (!looksLikeGenData) {
-        if (statusEl) {
-          statusEl.style.color = "#f59e0b";
-          statusEl.textContent =
-            "⚠️ El portapapeles no contiene datos de generación válidos.";
-        }
-        textarea.focus();
-        return;
-      }
-
-      textarea.value = text.trim();
-
-      if (statusEl) {
-        statusEl.style.color = "#10b981";
-        statusEl.textContent = "📋 Datos cargados desde el portapapeles. Revisa y aplica.";
-      }
-
-      textarea.focus();
-      textarea.select();
-    }
-
-    // Try modern Clipboard API first, fallback to execCommand
-    if (navigator.clipboard && navigator.clipboard.readText) {
-      navigator.clipboard
-        .readText()
-        .then((text) => setClipboardText(text))
-        .catch((err) => {
-          // Permission denied or not available — let user paste manually
-          const statusEl = document.getElementById("pgd_modal_status");
-          if (statusEl) {
-            statusEl.style.color = "#f59e0b";
-            statusEl.textContent =
-              "⚠️ Sin permiso de portapapeles. Pega manualmente con Ctrl+V.";
-          }
-          document.getElementById("pgd_modal_input")?.focus();
-        });
-    } else {
-      // Fallback: try execCommand paste into a temp element
-      try {
-        const temp = document.createElement("textarea");
-        temp.style.cssText = "position:fixed;opacity:0;top:0;left:0;";
-        document.body.appendChild(temp);
-        temp.focus();
-        const success = document.execCommand("paste");
-        const text = temp.value;
-        document.body.removeChild(temp);
-        if (success && text) {
-          setClipboardText(text);
-        } else {
-          document.getElementById("pgd_modal_input")?.focus();
-        }
-      } catch (e) {
-        document.getElementById("pgd_modal_input")?.focus();
-      }
-    }
+    // Auto-focus textarea
+    setTimeout(() => {
+      document.getElementById("pgd_modal_input")?.focus();
+    }, 100);
   }
 
   // ─── Pure JS parser (mirrors Python logic) ────────────────────────────────
